@@ -34,9 +34,10 @@ pipeline {
          
         stage('Login to Cloud') {
             steps {
-		            def sshUsername = params.username
+		   script {       
+                   def sshUsername = params.username
                     def sshHost = params.host
-		            def sshPassword = params.password
+	            def sshPassword = params.password
                     def privateKeyString
 
                     if (params.cloudProvider == 'AWS') {
