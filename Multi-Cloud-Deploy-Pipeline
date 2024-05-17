@@ -162,8 +162,7 @@ pipeline {
             }
         }
     }
-
-
+}
 def getPrivateKeyString(credentialId) {
     def credentials = com.cloudbees.plugins.credentials.CredentialsProvider.lookupCredentials(
         com.cloudbees.jenkins.plugins.sshcredentials.impl.BasicSSHUserPrivateKey.class,
