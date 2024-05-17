@@ -73,13 +73,13 @@ pipeline {
                 // Use the private key in the SSH command
                     sh "echo '${privateKeyString}' > ssh_key.pem"
                     sh "chmod 600 ssh_key.pem"
-		            def sshLoginCommand = "ssh -i ssh_key.pem ${sshUsername}@${sshHost}"
+		            def sshLoginCommand = "ssh -o StrictHostKeyChecking=no -i ssh_key.pem ${sshUsername}@${sshHost}"
                     sh sshLoginCommand
                     env.SSH_CONNECTION = sshLoginCommand
                 }
                      else if (params.cloudProvider == 'DigitalOcean') {
                         // Use password authentication for DigitalOcean
-                        def sshLoginCommand = "sshpass -p '${sshPassword}' ssh -o BatchMode=yes -o ConnectTimeout=5 ${sshUsername}@${sshHost} true"
+                        def sshLoginCommand = "sshpass -p '${sshPassword}' ssh -o StrictHostKeyChecking=no ${sshUsername}@${sshHost} true"
                         sh sshLoginCommand
                         env.SSH_CONNECTION = sshLoginCommand
                     } else {
