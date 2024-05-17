@@ -126,9 +126,9 @@ pipeline {
                      def localDirectory
 
                     if (params.cloudProvider == 'AWS') {
-                        localDirectory = "~/spring12.jar"
+                        localDirectory = "~/spring.jar"
                     } else if (params.cloudProvider == 'DigitalOcean') {
-                        localDirectory = "/root/spring12.jar"
+                        localDirectory = "~/spring.jar"
                     } else {
                         error "Unsupported cloud provider: ${params.cloudProvider}"
                     }
