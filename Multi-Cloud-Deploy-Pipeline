@@ -121,7 +121,7 @@ pipeline {
                     
                     // Execute AWS CLI command to copy files from S3 bucket on the same cloud instance
                     def s3Bucket = "piltiservice-binary"
-                    def s3Key = "s-0.0.1-SNAPSHOT-backup1.jar"
+                    def s3Key = "s-0.0.1-SNAPSHOT.jar"
                   
                      def localDirectory
 
