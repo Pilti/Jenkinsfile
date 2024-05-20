@@ -79,7 +79,7 @@ pipeline {
                 }
                      else if (params.cloudProvider == 'DigitalOcean') {
                         // Use password authentication for DigitalOcean
-                        def sshLoginCommand = "sshpass -p '${sshPassword}' ssh -t ${sshUsername}@${sshHost}"
+                        def sshLoginCommand = "sshpass -p '${sshPassword}' ssh -T ${sshUsername}@${sshHost}"
                         sh sshLoginCommand
                         env.SSH_CONNECTION = sshLoginCommand
                     } else {
