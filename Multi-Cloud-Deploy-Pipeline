@@ -3,10 +3,10 @@ pipeline {
     
     parameters {
         choice(name: 'cloudProvider', choices: ['AWS', 'DigitalOcean'], description: 'Select Cloud Provider')
-        string(name: 'username', defaultValue: '', description: 'Username')
+        string(name: 'username', defaultValue: 'ubuntu', description: 'Username')
         string(name: 'host', defaultValue: '', description: 'Host IP')
         choice(name: 'CREDENTIAL_ID', choices: ['WEBSITE', 'MINIO', 'PILTICENTRAL', 'PILTISERVICE', 'SAAS', 'JENKINS', 'DEMO'], description: 'Select SSH private key credential')
-        string(name: 'password', defaultValue: '', description: 'Password (For DigitalOcean)')
+        string(name: 'password', defaultValue: 'MonkeyDonkey-123a', description: 'Password (For DigitalOcean)')
     }
 
 
