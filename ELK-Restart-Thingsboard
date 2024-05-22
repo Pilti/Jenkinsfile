@@ -1,0 +1,154 @@
+pipeline {
+    agent any
+    
+    parameters {
+        choice(name: 'cloudProvider', choices: ['AWS', 'DigitalOcean'], description: 'Select Cloud Provider')
+        string(name: 'username', defaultValue: 'ubuntu', description: 'Username')
+        string(name: 'host', defaultValue: '', description: 'Host IP')
+        choice(name: 'CREDENTIAL_ID', choices: ['WEBSITE', 'MINIO', 'PILTICENTRAL', 'PILTISERVICE', 'SAAS', 'JENKINS', 'DEMO'], description: 'Select SSH private key credential (for AWS)')
+        string(name: 'password', defaultValue: 'MonkeyDonkey-123a', description: 'Password (For DigitalOcean)')
+    }
+     
+    stages {
+        stage('HTTP GET Request') {
+            steps {
+                script {
+                    def requestBody = '''
+                    {
+                      "query": {
+                        "bool": {
+                          "must": [
+                            {
+                              "match": {
+                                "message": "DEBUG"
+                              }
+                            },
+                            {
+                              "range": {
+                                "@timestamp": {
+                                  "gte": "now-10m",
+                                  "lte": "now"
+                                }
+                              }
+                            }
+                          ]
+                        }
+                      }
+                    }
+                    '''
+
+                    def response = sh(script: """
+                        curl -X GET \\
+                             --cacert /etc/ssl/certs/ca.crt \\
+                             -u elastic:qwer1234 \\
+                             -H "Content-Type: application/json" \\
+                             -d '${requestBody}' \\
+                             https://143.244.140.20:9200/thingsboard-2024.05.22/_count
+                    """, returnStdout: true).trim()
+
+                    def count = sh(script: "echo '${response}' | jq .count", returnStdout: true).trim()
+                    echo "Count: ${count}"
+
+                    if (count.toInteger() >= 2000) {
+                        echo "Count is greater than or equal to 2000. Preparing to reboot..."
+                        env.REBOOT_REQUIRED = true
+                    } else {
+                        echo "Count is less than 2000. ALL OKAY!!"
+                        env.REBOOT_REQUIRED = false
+                    }
+                }
+            }
+        }
+
+        stage('Download JAR files') {
+            when {
+                expression { env.REBOOT_REQUIRED == 'true' }
+            }
+            steps {
+                script {
+                    sh 'wget https://repo1.maven.org/maven2/com/jcraft/jsch/0.1.55/jsch-0.1.55.jar -O jsch-0.1.55.jar'
+                    def jschJarPath = "${env.WORKSPACE}/jsch-0.1.55.jar"
+                    sh "export CLASSPATH=${jschJarPath}:${CLASSPATH}"
+                }
+            }
+        }
+
+        stage('Login to Cloud') {
+            when {
+                expression { env.REBOOT_REQUIRED == 'true' }
+            }
+            steps {
+                script {
+                    def sshUsername = params.username
+                    def sshHost = params.host
+                    def sshPassword = params.password
+                    def privateKeyString
+
+                    if (params.cloudProvider == 'AWS') {
+                        switch (params.CREDENTIAL_ID) {
+                            case 'WEBSITE':
+                                privateKeyString = getPrivateKeyString('aws_website')
+                                break
+                            case 'MINIO':
+                                privateKeyString = getPrivateKeyString('aws_s3')
+                                break
+                            case 'PILTICENTRAL':
+                                privateKeyString = getPrivateKeyString('aws_pilticentral')
+                                break
+                            case 'PILTISERVICE':
+                                privateKeyString = getPrivateKeyString('aws_piltiservice')
+                                break
+                            case 'SAAS':
+                                privateKeyString = getPrivateKeyString('aws_mumbai')
+                                break
+                            case 'JENKINS':
+                                privateKeyString = getPrivateKeyString('aws_jenkins')
+                                break
+                            case 'DEMO':
+                                privateKeyString = getPrivateKeyString('aws_demo')
+                                break
+                            default:
+                                error("Invalid credential selection")
+                        }
+                        sh "echo '${privateKeyString}' > ssh_key.pem"
+                        sh "chmod 400 ssh_key.pem"
+                        env.SSH_CONNECTION = "ssh -i 'ssh_key.pem' ${sshUsername}@${sshHost}"
+                    } else if (params.cloudProvider == 'DigitalOcean') {
+                        env.SSH_CONNECTION = "sshpass -p '${sshPassword}' ssh ${sshUsername}@${sshHost}"
+                    } else {
+                        error "Unsupported cloud provider: ${params.cloudProvider}"
+                    }
+                }
+            }
+        }
+
+        stage('Reboot the Server') {
+            when {
+                expression { env.REBOOT_REQUIRED == 'true' && (params.cloudProvider == 'AWS' || params.cloudProvider == 'DigitalOcean') }
+            }
+            steps {
+                script {
+                    def sshCommand = env.SSH_CONNECTION ?: error("SSH connection not established")
+                    def reboot = "sudo reboot"
+                    sh "${sshCommand} '${reboot}'"
+                }
+            }
+        }
+    }
+}
+
+def getPrivateKeyString(credentialId) {
+    def credentials = com.cloudbees.plugins.credentials.CredentialsProvider.lookupCredentials(
+        com.cloudbees.jenkins.plugins.sshcredentials.impl.BasicSSHUserPrivateKey.class,
+        Jenkins.instance,
+        null,
+        null
+    )
+
+    def credential = credentials.find { it.id == credentialId }
+    if (credential) {
+        return credential.getPrivateKey()
+    } else {
+        error("Credential not found for ID: ${credentialId}")
+    }
+}
