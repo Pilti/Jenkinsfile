@@ -35,7 +35,7 @@ stage('PitiSmart Online Check') {
                     try {
                         def response = httpRequest(
                             httpMode: 'GET',
-                            url: 'http://13.234.91.37:8880/ram'
+                            url: 'http://13.233.32.168:8880/ram'
                         )
                         def jsonResponse = new groovy.json.JsonSlurper().parseText(response.getContent())
 
@@ -79,7 +79,7 @@ stage('PitiSmart CPU Check') {
             try {
                 def response = httpRequest(
                     httpMode: 'GET',
-                    url: 'http://13.234.91.37:8880/cpu'
+                    url: 'http://13.233.32.168:8880/cpu'
                 )
                 def jsonResponse = new groovy.json.JsonSlurper().parseText(response.getContent())
 
@@ -121,7 +121,7 @@ stage('PitiSmart Free Space Check') {
             try {
                 def response = httpRequest(
                     httpMode: 'GET',
-                    url: 'http://13.234.91.37:8880/freediskspace'
+                    url: 'http://13.233.32.168:8880/freediskspace'
                 )
 
                 def jsonResponse = new groovy.json.JsonSlurper().parseText(response.getContent())
