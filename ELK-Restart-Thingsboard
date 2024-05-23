@@ -5,55 +5,34 @@ pipeline {
         choice(name: 'cloudProvider', choices: ['AWS', 'DigitalOcean'], description: 'Select Cloud Provider')
         string(name: 'username', defaultValue: 'ubuntu', description: 'Username')
         string(name: 'host', defaultValue: '', description: 'Host IP')
-        choice(name: 'CREDENTIAL_ID', choices: ['WEBSITE', 'MINIO', 'PILTICENTRAL', 'PILTISERVICE', 'SAAS', 'JENKINS', 'DEMO'], description: 'Select SSH private key credential (for AWS)')
+        choice(name: 'CREDENTIAL_ID', choices: ['DEMO', 'MINIO', 'PILTICENTRAL', 'PILTISERVICE', 'SAAS', 'JENKINS', 'WEBSITE'], description: 'Select SSH private key credential (for AWS)')
         string(name: 'password', defaultValue: 'MonkeyDonkey-123a', description: 'Password (For DigitalOcean)')
+        text(name: 'RequestBody', defaultValue: '', description: 'Enter your Logic here')
     }
      
     stages {
         stage('HTTP GET Request') {
             steps {
                 script {
-                    def requestBody = '''
-                    {
-                      "query": {
-                        "bool": {
-                          "must": [
-                            {
-                              "match": {
-                                "message": "DEBUG"
-                              }
-                            },
-                            {
-                              "range": {
-                                "@timestamp": {
-                                  "gte": "now-10m",
-                                  "lte": "now"
-                                }
-                              }
-                            }
-                          ]
-                        }
-                      }
-                    }
-                    '''
-
+                    def requestBody = params.RequestBody
+                    // def jsonRequestBody = requestBody.replace("'", "'\\''")
                     def response = sh(script: """
                         curl -X GET \\
                              --cacert /etc/ssl/certs/ca.crt \\
                              -u elastic:qwer1234 \\
                              -H "Content-Type: application/json" \\
-                             -d '${requestBody}' \\
-                             https://143.244.140.20:9200/thingsboard-2024.05.22/_count
+                              -d '''${requestBody}''' \\
+                             https://143.244.140.20:9200/thingsboard-2024.05.23/_count
                     """, returnStdout: true).trim()
 
                     def count = sh(script: "echo '${response}' | jq .count", returnStdout: true).trim()
                     echo "Count: ${count}"
 
-                    if (count.toInteger() >= 2000) {
-                        echo "Count is greater than or equal to 2000. Preparing to reboot..."
+                    if (count.toInteger() >= 10) {
+                        echo "Count is greater than or equal to 10. Preparing to reboot..."
                         env.REBOOT_REQUIRED = true
                     } else {
-                        echo "Count is less than 2000. ALL OKAY!!"
+                        echo "Count is less than 10. ALL OKAY!!"
                         env.REBOOT_REQUIRED = false
                     }
                 }
@@ -86,8 +65,8 @@ pipeline {
 
                     if (params.cloudProvider == 'AWS') {
                         switch (params.CREDENTIAL_ID) {
-                            case 'WEBSITE':
-                                privateKeyString = getPrivateKeyString('aws_website')
+                            case 'DEMO':
+                                privateKeyString = getPrivateKeyString('aws_demo')
                                 break
                             case 'MINIO':
                                 privateKeyString = getPrivateKeyString('aws_s3')
@@ -104,13 +83,13 @@ pipeline {
                             case 'JENKINS':
                                 privateKeyString = getPrivateKeyString('aws_jenkins')
                                 break
-                            case 'DEMO':
-                                privateKeyString = getPrivateKeyString('aws_demo')
+                            case 'WEBSITE':
+                                privateKeyString = getPrivateKeyString('aws_website')
                                 break
                             default:
                                 error("Invalid credential selection")
                         }
-                        sh "echo '${privateKeyString}' > ssh_key.pem"
+                        sh "echo '${privateKeyString}' > ssh_key.pem 2>/dev/null"
                         sh "chmod 400 ssh_key.pem"
                         env.SSH_CONNECTION = "ssh -i 'ssh_key.pem' ${sshUsername}@${sshHost}"
                     } else if (params.cloudProvider == 'DigitalOcean') {
