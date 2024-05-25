@@ -5,7 +5,7 @@ pipeline {
         choice(name: 'cloudProvider', choices: ['AWS', 'DigitalOcean'], description: 'Select Cloud Provider')
         string(name: 'username', defaultValue: 'ubuntu', description: 'Username')
         string(name: 'host', defaultValue: '', description: 'Host IP')
-        choice(name: 'CREDENTIAL_ID', choices: ['WEBSITE', 'MINIO', 'PILTICENTRAL', 'PILTISERVICE', 'SAAS', 'JENKINS', 'DEMO'], description: 'Select SSH private key credential')
+        choice(name: 'CREDENTIAL_ID', choices: ['WEBSITE', 'MINIO', 'PILTICENTRAL', 'PILTISERVICE', 'SAAS', 'JENKINS', 'DEMO', 'REDHAT'], description: 'Select SSH private key credential')
         string(name: 'password', defaultValue: 'MonkeyDonkey-123a', description: 'Password (For DigitalOcean)')
     }
 
@@ -66,6 +66,9 @@ pipeline {
                             break
                         case 'DEMO':
                             privateKeyString = getPrivateKeyString('Trial')
+                            break
+			case 'REDHAT':
+                            privateKeyString = getPrivateKeyString('redhat')
                             break
                         default:
                             error("Invalid credential selection")
