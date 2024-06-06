@@ -292,12 +292,12 @@ pipeline {
                     sh "${sshCommand} '${reboot}'"
                     emailext body: "Pipeline failed. Rebooting the server...",
                                 subject: "Pipeline Failed",
-                                to: "jsvivek3@email.com"
+                                to: "jsvivek3@gmail.com"
                 } else {
                     echo "Pipeline succeeded or reboot is not required."
                     emailext body: "Pipeline Successed !!",
                                 subject: "Pipeline Success",
-                                to: "jsvivek3@email.com"
+                                to: "jsvivek3@gmail.com"
                 }
             }
         }
