@@ -81,7 +81,7 @@ pipeline {
                     def sshCommand = env.SSH_CONNECTION ?: error("SSH connection not established")
                     
                      // Find the PID of the spring.jar process
-                    def findPidCommand = "${sshCommand} 'ps -ef | grep \"java -jar /home/ubuntu/spring.jar\" | grep -v grep | awk \"{print \\\$2}\"'"
+                    def findPidCommand = "${sshCommand} 'ps -ef | grep \"sudo nohup java -jar /home/ubuntu/spring.jar\" | grep -v grep | awk \"{print \\\$2}\"'"
                     echo "Find PID Command: ${findPidCommand}"
                     def pid = sh(script: findPidCommand, returnStdout: true).trim()
                     
