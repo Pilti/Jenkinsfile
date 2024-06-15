@@ -74,22 +74,31 @@ pipeline {
             }
         }
 
+ 
         stage('Find and Kill Process') {
             steps {
                 script {
                     // Ensure SSH connection details are available
                     def sshCommand = env.SSH_CONNECTION ?: error("SSH connection not established")
                     
-                     // Find the PID of the spring.jar process
+                    // Debug output to check SSH command
+                    echo "SSH Command: ${sshCommand}"
+                    
+                    // Find the PIDs of the spring.jar process
                     def findPidCommand = "${sshCommand} 'ps -ef | grep \"java -jar /home/ubuntu/spring.jar\" | grep -v grep | awk \"{print \\\$2}\"'"
                     echo "Find PID Command: ${findPidCommand}"
-                    def pid = sh(script: findPidCommand, returnStdout: true).trim()
+                    def pids = sh(script: findPidCommand, returnStdout: true).trim().split("\n")
                     
-                    // Kill the process using the PID
-                    if (pid) {
-                        def killCommand = "${sshCommand} 'sudo kill -9 ${pid}'"
-                        echo "${killCommand}"
-                        sh "${killCommand}"
+                    // Debug output to check PIDs
+                    echo "Found PIDs: ${pids.join(', ')}"
+                    
+                    // Kill the process using each PID
+                    if (pids) {
+                        pids.each { pid ->
+                            def killCommand = "${sshCommand} 'sudo kill -9 ${pid}'"
+                            echo "Kill Command: ${killCommand}"
+                            sh(killCommand)
+                        }
                     } else {
                         echo "No process found for spring.jar"
                     }
@@ -98,6 +107,7 @@ pipeline {
         }
     }
 }
+  
 
 def getPrivateKeyString(credentialId) {
     def credentials = com.cloudbees.plugins.credentials.CredentialsProvider.lookupCredentials(
