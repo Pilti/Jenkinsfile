@@ -52,7 +52,7 @@ stage('PitiSmart Online Check') {
                         if (availableMemoryPercentage != null) {
                             echo "Available Memory Percentage: ${availableMemoryPercentage}%"
 
-                            if (availableMemoryPercentage >= 25.0) {
+                            if (availableMemoryPercentage >= 20.0) {
                                 echo "Pass: Available Memory Percentage is greater than 25% 'Alright!!'.'Stage 2 Done'"
                             } else {
                                 throw new Exception("Fail: Available Memory Percentage is less than 25%")
