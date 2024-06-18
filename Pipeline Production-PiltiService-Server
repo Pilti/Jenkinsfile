@@ -45,7 +45,7 @@ stage('PitiSmart Online Check') {
                         currentBuild.result = 'FAILURE' // Mark the build as failed
                         emailext body: "Error occurred in PitiSmart RAM Check stage: ${e.message}",
                                  subject: "Pipeline Failed",
-                                 to: "jsvivek3@email.com" // Enter the email address to send notifications
+                                 to: "jsvivek3@gmail.com" // Enter the email address to send notifications
                     }
 
                     try {
@@ -65,7 +65,7 @@ stage('PitiSmart Online Check') {
                         currentBuild.result = 'FAILURE' // Mark the build as failed
                         emailext body: "Error occurred in PitiSmart RAM Check stage: ${e.message}",
                                  subject: "Pipeline Failed",
-                                 to: "jsvivek3@email.com" // Enter the email address to send notifications
+                                 to: "jsvivek3@gmail.com" // Enter the email address to send notifications
                     }
                 }
             }
@@ -93,7 +93,7 @@ stage('PitiSmart CPU Check') {
                         currentBuild.result = 'FAILURE' // Mark the build as failed
                         emailext body: "CPU Load is greater than or equal to 80%: ${cpuLoad}",
                             subject: "Pipeline Failed",
-                            to: "your@email.com" // Enter the email address to send notifications
+                            to: "your@gmail.com" // Enter the email address to send notifications
                     } else {
                         echo "PASS: CPU Load is lesser than 80% acceptable limit 'Alright!!'.'Stage 3 Done'"
                     }
@@ -102,14 +102,14 @@ stage('PitiSmart CPU Check') {
                     currentBuild.result = 'FAILURE' // Mark the build as failed
                     emailext body: "Error occurred in if-else block: ${e.message}",
                         subject: "Pipeline Failed",
-                        to: "jsvivek3@email.com" // Enter the email address to send notifications
+                        to: "jsvivek3@gmail.com" // Enter the email address to send notifications
                 }
             } catch (Exception ex) {
                 echo "Exception occurred: ${ex.message}"
                 currentBuild.result = 'FAILURE' // Mark the build as failed
                 emailext body: "Error occurred in PitiSmart CPU Check stage: ${ex.message}",
                     subject: "Pipeline Failed",
-                    to: "jsvivek3@email.com" // Enter the email address to send notifications
+                    to: "jsvivek3@gmail.com" // Enter the email address to send notifications
             }
         }
     }
@@ -136,7 +136,7 @@ stage('PitiSmart Free Space Check') {
                         currentBuild.result = 'FAILURE' // Mark the build as failed
                         emailext body: "Unallocated space is less than 30%: ${unallocatedSpacePercentage}",
                             subject: "Pipeline Failed",
-                            to: "jsvivek3@email.com" // Enter the email address to send notifications
+                            to: "jsvivek3@gmail.com" // Enter the email address to send notifications
                     } else {
                         echo "PASS : Free Space is Greater Than 30% 'Alright!!' .'Stage 4 Done'"
                     }
@@ -145,14 +145,14 @@ stage('PitiSmart Free Space Check') {
                     currentBuild.result = 'FAILURE' // Mark the build as failed
                     emailext body: "Error occurred in if-else block: ${e.message}",
                         subject: "Pipeline Failed",
-                        to: "jsvivek3@email.com" // Enter the email address to send notifications
+                        to: "jsvivek3@gmail.com" // Enter the email address to send notifications
                 }
             } catch (Exception ex) {
                 echo "Exception occurred: ${ex.message}"
                 currentBuild.result = 'FAILURE' // Mark the build as failed
                 emailext body: "Error occurred in PitiSmart Free Space Check stage: ${ex.message}",
                     subject: "Pipeline Failed",
-                    to: "jsvivek3@email.com" // Enter the email address to send notifications
+                    to: "jsvivek3@gmail.com" // Enter the email address to send notifications
             }
         }
     }
