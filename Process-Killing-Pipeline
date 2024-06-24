@@ -85,7 +85,7 @@ pipeline {
                     echo "SSH Command: ${sshCommand}"
                     
                     // Find the PIDs of the spring.jar process
-                    def findPidCommand = "${sshCommand} 'ps -ef | grep \"java -jar /home/ubuntu/spring.jar\" | grep -v grep | awk \"{print \\\$2}\"'"
+                    def findPidCommand = "${sshCommand} 'ps -ef | grep \"spring.jar\" | grep -v grep | awk \"{print \\\$2}\"'"
                     echo "Find PID Command: ${findPidCommand}"
                     def pids = sh(script: findPidCommand, returnStdout: true).trim().split("\n")
                     
