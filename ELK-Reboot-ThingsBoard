@@ -169,7 +169,7 @@ pipeline {
                         currentBuild.result = 'FAILURE'
                         emailext body: "Error occurred in PitiSmart RAM Check stage: ${e.message}",
                                  subject: "Pipeline Failed",
-                                 to: "jsvivek3@email.com"
+                                 to: "jsvivek3@gmail.com"
                     }
 
                     try {
@@ -189,7 +189,7 @@ pipeline {
                         currentBuild.result = 'FAILURE'
                         emailext body: "Error occurred in PitiSmart RAM Check stage: ${e.message}",
                                  subject: "Pipeline Failed",
-                                 to: "jsvivek3@email.com"
+                                 to: "jsvivek3@gmail.com"
                     }
                 }
             }
@@ -215,7 +215,7 @@ pipeline {
                                 currentBuild.result = 'FAILURE'
                                 emailext body: "CPU Load is greater than or equal to 80%: ${cpuLoad}",
                                     subject: "Pipeline Failed",
-                                    to: "jsvivek3@email.com"
+                                    to: "jsvivek3@gmail.com"
                             } else {
                                 echo "PASS: CPU Load is less than 80% acceptable limit 'Alright!!'.'Stage 3 Done'"
                             }
@@ -224,14 +224,14 @@ pipeline {
                             currentBuild.result = 'FAILURE'
                             emailext body: "Error occurred in if-else block: ${e.message}",
                                 subject: "Pipeline Failed",
-                                to: "jsvivek3@email.com"
+                                to: "jsvivek3@gmail.com"
                         }
                     } catch (Exception ex) {
                         echo "Exception occurred: ${ex.message}"
                         currentBuild.result = 'FAILURE'
                         emailext body: "Error occurred in PitiSmart CPU Check stage: ${ex.message}",
                             subject: "Pipeline Failed",
-                            to: "jsvivek3@email.com"
+                            to: "jsvivek3@gmail.com"
                     }
                 }
             }
@@ -258,7 +258,7 @@ pipeline {
                                 currentBuild.result = 'FAILURE'
                                 emailext body: "Unallocated space is less than 30%: ${unallocatedSpacePercentage}",
                                     subject: "Pipeline Failed",
-                                    to: "jsvivek3@email.com"
+                                    to: "jsvivek3@gmail.com"
                             } else {
                                 echo "PASS: Free Space is Greater Than 30% 'Alright!!' .'Stage 4 Done'"
                             }
@@ -267,14 +267,14 @@ pipeline {
                             currentBuild.result = 'FAILURE'
                             emailext body: "Error occurred in if-else block: ${e.message}",
                                 subject: "Pipeline Failed",
-                                to: "jsvivek3@email.com"
+                                to: "jsvivek3@gmail.com"
                         }
                     } catch (Exception ex) {
                         echo "Exception occurred: ${ex.message}"
                         currentBuild.result = 'FAILURE'
                         emailext body: "Error occurred in PitiSmart Free Space Check stage: ${ex.message}",
                             subject: "Pipeline Failed",
-                            to: "jsvivek3@email.com"
+                            to: "jsvivek3@gmail.com"
                     }
                 }
             }
