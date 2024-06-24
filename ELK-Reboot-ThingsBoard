@@ -40,7 +40,6 @@ pipeline {
 
                     def response = sh(script: """
                         curl -X GET \\
-                           //  --cacert /etc/ssl/certs/ca.crt \\
                              -u elastic:qwer1234 \\
                              -H "Content-Type: application/json" \\
                              -d '''${requestBody}''' \\
