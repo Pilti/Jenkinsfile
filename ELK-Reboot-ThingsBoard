@@ -36,11 +36,11 @@ pipeline {
                 script {
                     def requestBody = params.RequestBody
                     def currentDate = sh(script: "date +%Y.%m.%d", returnStdout: true).trim()
-                    def url = "https://143.244.140.20:9200/thingsboard-${currentDate}/_count"
+                    def url = "http://206.189.142.19/:9200/thingsboard-${currentDate}/_count"
 
                     def response = sh(script: """
                         curl -X GET \\
-                             --cacert /etc/ssl/certs/ca.crt \\
+                           //  --cacert /etc/ssl/certs/ca.crt \\
                              -u elastic:qwer1234 \\
                              -H "Content-Type: application/json" \\
                              -d '''${requestBody}''' \\
